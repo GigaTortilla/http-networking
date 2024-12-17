@@ -10,13 +10,12 @@
 #include "include/utils.h"
 
 int main(void) {
-    int server_fd, conn_fd, status;
-    struct addrinfo hints, *res, *p;
+    int conn_fd, status;
+    struct addrinfo hints, *res;
     struct sockaddr_storage client_addr;
     socklen_t sin_size;
     struct sigaction action;
     char s[INET6_ADDRSTRLEN];
-    int yes = 1;
 
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_UNSPEC;
@@ -28,28 +27,8 @@ int main(void) {
         return EXIT_FAILURE;
     }
 
-    for (p = res; p != NULL; p = p->ai_next) {
-        if ((server_fd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {
-            perror("socket");
-            continue;
-        }
-        if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof (int)) == -1) {
-            perror("setsockopt");
-            return EXIT_FAILURE;
-        }
-        if (bind(server_fd, p->ai_addr, p->ai_addrlen) == -1) {
-            close(server_fd);
-            perror("bind");
-            continue;
-        }
-        break;
-    }
-    freeaddrinfo(res);
+    int server_fd = get_socket_bind(res);
 
-    if (p == NULL) {
-        fprintf(stderr, "Unable to bind\n");
-        return EXIT_FAILURE;
-    }
     if (listen(server_fd, BACKLOG) == -1) {
         perror("listen");
         return EXIT_FAILURE;
@@ -76,14 +55,7 @@ int main(void) {
         printf("%s\n", s);
 
         if (!fork()) {
-            close(server_fd);
-            printf("%ld\n", (long)getpid());
-            // stdout is copied to connection socket file descriptor
-            // dup2(conn_fd, STDOUT_FILENO);
-            if (send(conn_fd, "Hello World!\n", 13, 0) == -1)
-                perror("send");
-            close(conn_fd);
-            return EXIT_SUCCESS;
+            hello_world_stream(server_fd, conn_fd);
         }
         close(conn_fd);
     }
