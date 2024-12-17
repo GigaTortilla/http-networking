@@ -33,7 +33,11 @@ void ping_pong(int client_socket) {
     }
     // WRITE
     if (strcmp(buffer, "ping\n") == 0) {
-        write(client_socket, "pong\n", 6);
+        int valwrite = write(client_socket, "pong\n", 6);
+        if (valwrite == -1) {
+            perror("write");
+            exit(EXIT_FAILURE);
+        }
     }
     close(client_socket);
     exit(EXIT_SUCCESS);
