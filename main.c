@@ -27,8 +27,10 @@ int main(void) {
         return EXIT_FAILURE;
     }
 
+    // SOCKET and BIND
     int server_fd = get_socket_bind(res);
 
+    // LISTEN
     if (listen(server_fd, BACKLOG) == -1) {
         perror("listen");
         return EXIT_FAILURE;
@@ -44,7 +46,8 @@ int main(void) {
     }
 
     while (1) {
-        sin_size = sizeof(client_addr);
+        // ACCEPT connection
+        sin_size = sizeof client_addr;
         if ((conn_fd = accept(server_fd, (struct sockaddr *)&client_addr, &sin_size)) == -1) {
             perror("accept");
             continue;
@@ -54,6 +57,7 @@ int main(void) {
         inet_ntop(client_addr.ss_family, get_in_addr((struct sockaddr*)&client_addr), s, sizeof s);
         printf("%s\n", s);
 
+        // READ/WRITE
         if (!fork()) {
             hello_world_stream(server_fd, conn_fd);
         }
