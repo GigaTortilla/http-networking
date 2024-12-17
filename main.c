@@ -59,8 +59,10 @@ int main(void) {
 
         // READ/WRITE
         if (!fork()) {
-            hello_world_stream(server_fd, conn_fd);
+            close(server_fd);
+            hello_world_stream(conn_fd);
         }
+        // parent process does not need the connected socket
         close(conn_fd);
     }
 }

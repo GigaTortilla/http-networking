@@ -25,8 +25,7 @@ void sigchld_handler(int sig) {
     errno = saved_errno;
 }
 
-void hello_world_stream(int server_socket, int client_socket) {
-    close(server_socket);
+void hello_world_stream(int client_socket) {
     printf("%ld\n", (long)getpid());
     // stdout is copied to connection socket file descriptor
     // dup2(conn_fd, STDOUT_FILENO);

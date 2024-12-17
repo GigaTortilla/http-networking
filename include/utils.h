@@ -20,7 +20,7 @@ void sigchld_handler(int sig);
 void *get_in_addr(struct sockaddr *sa);
 
 // simple hello world response to a successful connected client
-void hello_world_stream(int server_socket, int client_socket);
+void hello_world_stream(int client_socket);
 
 /**
  * Create a socket and bind an address to it.
