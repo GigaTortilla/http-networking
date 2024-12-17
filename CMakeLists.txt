@@ -5,4 +5,6 @@ set(CMAKE_C_STANDARD 23)
 
 add_executable(http_server main.c
         utils.c
-        include/utils.h)
+        include/utils.h
+        server.c
+        include/server.h)

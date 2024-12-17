@@ -6,7 +6,7 @@
 #define UTILS_H
 
 #define PORT "8080"
-#define BUFSIZE 1024
+#define BUFFER_SIZE 1024
 #define BACKLOG 5
 
 // handler function for child processes
@@ -18,9 +18,6 @@ void sigchld_handler(int sig);
  * @return the address in IPv4 or IPv6 sockaddr_in[6]
  */
 void *get_in_addr(struct sockaddr *sa);
-
-// simple hello world response to a successful connected client
-void hello_world_stream(int client_socket);
 
 /**
  * Create a socket and bind an address to it.

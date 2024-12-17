@@ -8,6 +8,7 @@
 #include <signal.h>
 #include <arpa/inet.h>
 #include "include/utils.h"
+#include "include/server.h"
 
 int main(void) {
     int conn_fd, status;
@@ -15,7 +16,6 @@ int main(void) {
     struct sockaddr_storage client_addr;
     socklen_t sin_size;
     struct sigaction action;
-    char s[INET6_ADDRSTRLEN];
 
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_UNSPEC;
@@ -46,6 +46,7 @@ int main(void) {
     }
 
     while (1) {
+        char s[INET6_ADDRSTRLEN];
         // ACCEPT connection
         sin_size = sizeof client_addr;
         if ((conn_fd = accept(server_fd, (struct sockaddr *)&client_addr, &sin_size)) == -1) {
@@ -57,10 +58,10 @@ int main(void) {
         inet_ntop(client_addr.ss_family, get_in_addr((struct sockaddr*)&client_addr), s, sizeof s);
         printf("%s\n", s);
 
-        // READ/WRITE
+        // child process
         if (!fork()) {
             close(server_fd);
-            hello_world_stream(conn_fd);
+            ping_pong(conn_fd);
         }
         // parent process does not need the connected socket
         close(conn_fd);

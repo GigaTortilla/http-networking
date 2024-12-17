@@ -25,16 +25,6 @@ void sigchld_handler(int sig) {
     errno = saved_errno;
 }
 
-void hello_world_stream(int client_socket) {
-    printf("%ld\n", (long)getpid());
-    // stdout is copied to connection socket file descriptor
-    // dup2(conn_fd, STDOUT_FILENO);
-    if (send(client_socket, "Hello World!\n", 13, 0) == -1)
-        perror("send");
-    close(client_socket);
-    exit(EXIT_SUCCESS);
-}
-
 int get_socket_bind(struct addrinfo *addr) {
     struct addrinfo *p;
     int server_socket;
