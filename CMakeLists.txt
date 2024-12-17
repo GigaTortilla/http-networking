@@ -3,4 +3,6 @@ project(http_server C)
 
 set(CMAKE_C_STANDARD 23)
 
-add_executable(http_server main.c)
+add_executable(http_server main.c
+        utils.c
+        include/utils.h)

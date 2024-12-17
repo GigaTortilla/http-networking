@@ -7,14 +7,7 @@
 #include <netdb.h>
 #include <signal.h>
 #include <arpa/inet.h>
-#include <sys/errno.h>
-
-#define PORT "8080"
-#define BUFSIZE 1024
-#define BACKLOG 5
-
-void sigint_handler(int sig);
-void *get_in_addr(struct sockaddr *sa);
+#include "include/utils.h"
 
 int main(void) {
     int server_fd, conn_fd, status;
@@ -62,7 +55,8 @@ int main(void) {
         return EXIT_FAILURE;
     }
 
-    action.sa_handler = sigint_handler;
+    // destroying child processes using handler function
+    action.sa_handler = sigchld_handler;
     sigemptyset(&action.sa_mask);
     action.sa_flags = SA_RESTART;
     if (sigaction(SIGINT, &action, nullptr) == -1) {
@@ -93,17 +87,4 @@ int main(void) {
         }
         close(conn_fd);
     }
-}
-
-void sigint_handler(int sig) {
-    int saved_errno = errno;
-    while (waitpid(-1, nullptr, WNOHANG) > 0);
-    errno = saved_errno;
-}
-
-void *get_in_addr(struct sockaddr *sa) {
-    if (sa->sa_family == AF_INET) {
-        return &(((struct sockaddr_in *)sa)->sin_addr);
-    }
-    return &(((struct sockaddr_in6 *)sa)->sin6_addr);
 }
