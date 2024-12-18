@@ -19,6 +19,8 @@ void sigchld_handler(int sig);
  */
 void *get_in_addr(struct sockaddr *sa);
 
+void *get_in_port(struct sockaddr *sa);
+
 /**
  * Create a socket and bind an address to it.
  * Closes the process if the bind failes.

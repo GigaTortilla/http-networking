@@ -46,7 +46,8 @@ int main(void) {
     }
 
     while (1) {
-        char s[INET6_ADDRSTRLEN];
+        char addr[INET6_ADDRSTRLEN];
+        char port[64];
         // ACCEPT connection
         sin_size = sizeof client_addr;
         if ((conn_fd = accept(server_fd, (struct sockaddr *)&client_addr, &sin_size)) == -1) {
@@ -55,13 +56,14 @@ int main(void) {
         }
 
         printf("Connection accepted\n");
-        inet_ntop(client_addr.ss_family, get_in_addr((struct sockaddr*)&client_addr), s, sizeof s);
-        printf("%s\n", s);
+        inet_ntop(client_addr.ss_family, get_in_addr((struct sockaddr*)&client_addr), addr, sizeof addr);
+        inet_ntop(client_addr.ss_family, get_in_port((struct sockaddr*)&client_addr), port, sizeof port);
+        printf("[%s:%s]\n", addr, port);
 
         // child process
         if (!fork()) {
             close(server_fd);
-            ping_pong(conn_fd);
+            http_hello_world(conn_fd);
         }
         // parent process does not need the connected socket
         close(conn_fd);

@@ -12,6 +12,22 @@
 
 #include "include/utils.h"
 
+void http_hello_world(int client_socket) {
+    char buffer[BUFFER_SIZE];
+    ssize_t valread = read(client_socket, buffer, BUFFER_SIZE);
+    if (valread < 0) {
+        perror("read");
+        exit(EXIT_FAILURE);
+    }
+    ssize_t valwrite = write(client_socket, HTTP_HELLO_WORLD, strlen(HTTP_HELLO_WORLD));
+    if (valwrite < 0) {
+        perror("write");
+        exit(EXIT_FAILURE);
+    }
+    close(client_socket);
+    exit(EXIT_SUCCESS);
+}
+
 void hello_world_stream(int client_socket) {
     printf("%ld\n", (long)getpid());
     // stdout is copied to connection socket file descriptor
@@ -27,14 +43,14 @@ void ping_pong(int client_socket) {
     // READ
     char buffer[BUFFER_SIZE];
     ssize_t valread = read(client_socket, buffer, BUFFER_SIZE);
-    if (valread == -1) {
+    if (valread < 0) {
         perror("read");
         exit(EXIT_FAILURE);
     }
     // WRITE
     if (strcmp(buffer, "ping\n") == 0) {
-        int valwrite = write(client_socket, "pong\n", 6);
-        if (valwrite == -1) {
+        ssize_t valwrite = write(client_socket, "pong\n", 6);
+        if (valwrite < 0) {
             perror("write");
             exit(EXIT_FAILURE);
         }
