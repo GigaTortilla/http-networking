@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 #include <signal.h>
 #include <sys/errno.h>
@@ -11,6 +12,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include "include/utils.h"
+#include "include/server.h"
 
 void *get_in_addr(struct sockaddr *sa) {
     if (sa->sa_family == AF_INET) {
@@ -30,6 +32,27 @@ void sigchld_handler(int sig) {
     int saved_errno = errno;
     while (waitpid(-1, nullptr, WNOHANG) > 0);
     errno = saved_errno;
+}
+
+char *get_resp_header(const char *uri) {
+    // HTTP header specific to requested file extension
+    char *file_extension = strrchr(uri, '.');
+    if (!file_extension)
+        return nullptr;
+
+    if (strcmp(file_extension, ".html") == 0)
+        return HTTP_HEADER_HTML;
+    if (strcmp(file_extension, ".css") == 0)
+        return HTTP_HEADER_CSS;
+    if (strcmp(file_extension, ".png") == 0)
+        return HTTP_HEADER_PNG;
+    if (strcmp(file_extension, ".jpeg") == 0)
+        return HTTP_HEADER_JPEG;
+    if (strcmp(file_extension, ".gif") == 0)
+        return HTTP_HEADER_GIF;
+    if (strcmp(file_extension, ".ico") == 0)
+        return HTTP_HEADER_ICO;
+    return nullptr;
 }
 
 void *check_mem(void *ptr) {

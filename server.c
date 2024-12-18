@@ -4,13 +4,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include "include/server.h"
-
-#include <string.h>
-#include <sys/syslimits.h>
-
 #include "include/utils.h"
 
 void simple_http(int client_socket) {
@@ -19,6 +16,7 @@ void simple_http(int client_socket) {
     if (!buffer) {
         perror("receive_data");
         send(client_socket, HTTP_ERROR_400, sizeof(HTTP_ERROR_400), 0);
+        close(client_socket);
         exit(EXIT_FAILURE);
     }
 
@@ -40,7 +38,17 @@ void simple_http(int client_socket) {
             close(client_socket);
             exit(EXIT_FAILURE);
         }
-        send(client_socket, HTTP_HEADER_HTML, sizeof HTTP_HEADER_HTML, 0);
+
+        char *http_header = get_resp_header(uri);
+        if (!http_header) {
+            fprintf(stderr, "Error getting response header for: %s\n", uri);
+            send(client_socket, HTTP_ERROR_400, strlen(HTTP_ERROR_400), 0);
+            free(file_contents);
+            close(client_socket);
+            exit(EXIT_FAILURE);
+        }
+
+        send(client_socket, http_header, strlen(http_header), 0);
         send(client_socket, file_contents, file_size, 0);
         free(file_contents);
     }

@@ -23,6 +23,10 @@ void *get_in_addr(struct sockaddr *sa);
 
 void *get_in_port(struct sockaddr *sa);
 
+void *check_mem(void *ptr);
+
+char *get_resp_header(const char *uri);
+
 /**
  * Create a socket and bind an address to it.
  * Closes the process if the bind failes.
