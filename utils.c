@@ -32,6 +32,14 @@ void sigchld_handler(int sig) {
     errno = saved_errno;
 }
 
+void *check_mem(void *ptr) {
+    if (!ptr) {
+        fprintf(stderr, "Memory allocation error\n");
+        exit(EXIT_FAILURE);
+    }
+    return ptr;
+}
+
 int get_socket_bind(struct addrinfo *addr) {
     struct addrinfo *p;
     int server_socket;
@@ -60,4 +68,32 @@ int get_socket_bind(struct addrinfo *addr) {
     }
 
     return server_socket;
+}
+
+char *receive_data(int sockfd) {
+    char *buf;
+    for (int attempt = 1; MSG_BUFFER_SIZE * attempt <= MAX_BUFFER_SIZE; attempt++) {
+        buf = check_mem(malloc(sizeof(char) * MSG_BUFFER_SIZE));
+        ssize_t bytes_received = recv(sockfd, buf, MSG_BUFFER_SIZE, 0);
+        if (bytes_received >= 0) {
+            buf[bytes_received] = '\0';
+            break;
+        }
+        free(buf);
+        buf = nullptr;
+    }
+    return buf;
+}
+
+char *read_file(const char *path, long *size) {
+    FILE *file = fopen(path, "rb");
+    if (file == nullptr) return nullptr;
+    fseek(file, 0, SEEK_END);
+    *size = ftell(file);
+    rewind(file);
+    char *data = check_mem(malloc(sizeof(char) * (*size + 1)));
+    fread(data, 1, *size, file);
+    data[*size] = '\0';
+    fclose(file);
+    return data;
 }

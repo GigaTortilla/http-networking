@@ -9,21 +9,64 @@
 #include "include/server.h"
 
 #include <string.h>
+#include <sys/syslimits.h>
 
 #include "include/utils.h"
 
-void http_hello_world(int client_socket) {
-    char buffer[BUFFER_SIZE];
-    ssize_t valread = read(client_socket, buffer, BUFFER_SIZE);
-    if (valread < 0) {
-        perror("read");
+void simple_http(int client_socket) {
+    // Read from client socket
+    char *buffer = receive_data(client_socket);
+    if (!buffer) {
+        perror("receive_data");
+        send(client_socket, HTTP_ERROR_400, sizeof(HTTP_ERROR_400), 0);
         exit(EXIT_FAILURE);
     }
+
+    char method[BUFFER_SIZE], uri[BUFFER_SIZE], version[BUFFER_SIZE];
+    sscanf(buffer, "%s %s %s", method, uri, version);
+    printf("%s\n%s\n%s\n", method, uri, version);
+
+    // remove leading forward slash from URI
+    if (uri[0] == '/') memmove(uri, uri + 1, strlen(uri));
+    if (strlen(uri) == 0) memmove(uri, "index.html", 11);
+
+    if (strcmp(method, "GET") == 0) {
+        long file_size = 0;
+        char *file_contents = read_file(uri, &file_size);
+        if (!file_contents) {
+            fprintf(stderr, "Error reading file: %s\n", uri);
+            send(client_socket, HTTP_ERROR_404, sizeof(HTTP_ERROR_404), 0);
+            free(file_contents);
+            close(client_socket);
+            exit(EXIT_FAILURE);
+        }
+        send(client_socket, HTTP_HEADER_HTML, sizeof HTTP_HEADER_HTML, 0);
+        send(client_socket, file_contents, file_size, 0);
+        free(file_contents);
+    }
+
+    free(buffer);
+    close(client_socket);
+    exit(EXIT_SUCCESS);
+}
+
+void http_hello_world(int client_socket) {
+    // Read from client socket
+    char *buffer = receive_data(client_socket);
+    if (!buffer) {
+        perror("receive_data");
+        send(client_socket, HTTP_ERROR_400, sizeof(HTTP_ERROR_400), 0);
+        exit(EXIT_FAILURE);
+    }
+
+    // write to client socket
     ssize_t valwrite = write(client_socket, HTTP_HELLO_WORLD, strlen(HTTP_HELLO_WORLD));
     if (valwrite < 0) {
         perror("write");
         exit(EXIT_FAILURE);
     }
+
+    free(buffer);
     close(client_socket);
     exit(EXIT_SUCCESS);
 }

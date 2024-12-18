@@ -9,8 +9,21 @@
                          "Server: http-server\r\n" \
                          "Content-type: text/html\r\n\r\n" \
                          "<html>Hello World!</html>\r\n"
+#define HTTP_HEADER_HTML "HTTP/1.1 200 OK\r\n" \
+                         "Content-type: text/html\r\n\r\n"
+#define HTTP_ERROR_400 "HTTP/1.1 400 Bad Request\r\n" \
+                       "Content-type: text/html\r\n" \
+                       "<html>400 Bad Request</html>\r\n"
+#define HTTP_ERROR_404 "HTTP/1.1 404 Not Found\r\n" \
+                       "Content-type: text/html\r\n" \
+                       "<html>404 Not Found</html>\r\n"
+#define HTTP_ERROR_5ßß "HTTP/1.1 500 Internal Server Error\r\n" \
+                       "Content-type: text/html\r\n" \
+                       "<html>500 Internal Server Error</html>\r\n"
 
 void http_hello_world(int client_socket);
+
+void simple_http(int client_socket);
 
 // simple hello world response to a successful connected client
 // child process to the server main loop

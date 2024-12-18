@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
 #include <signal.h>
@@ -13,7 +12,6 @@
 int main(void) {
     int conn_fd, status;
     struct addrinfo hints, *res;
-    struct sockaddr_storage client_addr;
     socklen_t sin_size;
     struct sigaction action;
 
@@ -46,24 +44,31 @@ int main(void) {
     }
 
     while (1) {
-        char addr[INET6_ADDRSTRLEN];
-        char port[64];
         // ACCEPT connection
+        struct sockaddr_storage client_addr;
         sin_size = sizeof client_addr;
-        if ((conn_fd = accept(server_fd, (struct sockaddr *)&client_addr, &sin_size)) == -1) {
+        if ((conn_fd = accept(server_fd, (struct sockaddr *)&client_addr, &sin_size)) < 0) {
             perror("accept");
             continue;
         }
+        // Check if client address was set during accept system call
+        if (!client_addr.ss_family) {
+            perror("Client's address not set");
+            write(conn_fd, HTTP_ERROR_400, sizeof(HTTP_ERROR_400));
+            close(conn_fd);
+            continue;
+        }
 
-        printf("Connection accepted\n");
+        char addr[INET6_ADDRSTRLEN];
+        char port[64];
         inet_ntop(client_addr.ss_family, get_in_addr((struct sockaddr*)&client_addr), addr, sizeof addr);
         inet_ntop(client_addr.ss_family, get_in_port((struct sockaddr*)&client_addr), port, sizeof port);
-        printf("[%s:%s]\n", addr, port);
+        printf("Connection accepted from [%s:%s]\n", addr, port);
 
         // child process
         if (!fork()) {
             close(server_fd);
-            http_hello_world(conn_fd);
+            simple_http(conn_fd);
         }
         // parent process does not need the connected socket
         close(conn_fd);
