@@ -8,7 +8,8 @@
 
 #include <WinSock2.h>
 
-#elif defined(__unix__) || defined(__unix) || defined(unix) || (defined(__APPLE__) && defined(__MACH__))
+#elif defined(__unix__) || defined(__unix) || defined(unix) \
+    || (defined(__APPLE__) && defined(__MACH__))
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -18,8 +19,8 @@
 #endif
 
 // additional project specific includes
-#include "include/utils.h"
-#include "include/server.h"
+#include "utils.h"
+#include "server.h"
 
 int main(void) {
     int conn_fd, status;

@@ -9,8 +9,8 @@
 #include <arpa/inet.h>
 
 // additional project specific header files
-#include "include/server.h"
-#include "include/utils.h"
+#include "server.h"
+#include "utils.h"
 
 void simple_http(int client_socket) {
     // Read from client socket

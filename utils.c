@@ -23,8 +23,8 @@
 #endif
 
 // additional project specific header files
-#include "include/utils.h"
-#include "include/server.h"
+#include "utils.h"
+#include "server.h"
 
 void *get_in_addr(struct sockaddr *sa) {
     if (sa->sa_family == AF_INET) {

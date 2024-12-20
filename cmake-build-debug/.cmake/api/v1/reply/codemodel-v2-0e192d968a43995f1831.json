@@ -15,7 +15,8 @@
 					"source" : ".",
 					"targetIndexes" : 
 					[
-						0
+						0,
+						1
 					]
 				}
 			],
@@ -30,7 +31,8 @@
 					"name" : "http_server",
 					"targetIndexes" : 
 					[
-						0
+						0,
+						1
 					]
 				}
 			],
@@ -39,8 +41,15 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "http_server::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-http_server-Debug-09477d273b933c718936.json",
+					"jsonFile" : "target-http_server-Debug-d32fdffc44caa021a6e2.json",
 					"name" : "http_server",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "http_server_lib::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-http_server_lib-Debug-a04707b565d1cd212eca.json",
+					"name" : "http_server_lib",
 					"projectIndex" : 0
 				}
 			]
