@@ -52,6 +52,8 @@ char *get_resp_header(const char *uri) {
         return HTTP_HEADER_GIF;
     if (strcmp(file_extension, ".ico") == 0)
         return HTTP_HEADER_ICO;
+    if (strcmp(file_extension, ".js") == 0)
+        return HTTP_HEADER_JS;
     return nullptr;
 }
 
