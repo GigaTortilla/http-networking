@@ -22,6 +22,8 @@
                          "Content-type: image/jpeg\r\n\r\n"
 #define HTTP_HEADER_ICO  "HTTP/1.1 200 OK\r\n" \
                          "Content-type: image/x-icon\r\n\r\n"
+#define HTTP_HEADER_JS   "HTTP/1.1 200 OK\r\n" \
+                         "Content-type: text/javascript\r\n\r\n"
 
 // HTTP error message macros
 #define HTTP_ERROR_400   "HTTP/1.1 400 Bad Request\r\n" \

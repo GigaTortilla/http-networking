@@ -7,6 +7,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+
+// additional project specific header files
 #include "include/server.h"
 #include "include/utils.h"
 
@@ -23,13 +25,14 @@ void simple_http(int client_socket) {
     char method[BUFFER_SIZE], uri[BUFFER_SIZE], version[BUFFER_SIZE];
     sscanf(buffer, "%s %s %s", method, uri, version);
 
-    // TODO make platform independent
+#if defined(__APPLE__) && defined(__MACH__)
     for (int i = 0; i < strlen(buffer); i++) {
         if (buffer[i] == '\r') {
             buffer[i] = ' ';
         }
     }
     printf("%s", buffer);
+#endif
 
     // remove leading forward slash from URI
     if (uri[0] == '/') memmove(uri, uri + 1, strlen(uri));

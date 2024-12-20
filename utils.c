@@ -5,12 +5,24 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 #include <signal.h>
-#include <sys/errno.h>
+#include <errno.h>
+
+#ifdef _WIN32
+
+#include <WinSock2.h>
+
+#elif defined(__linux__) || defined(__unix__) || defined(__unix) || defined(unix) \
+    || defined(__APPLE__) && defined(__MACH__)
+
+#include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+
+#endif
+
+// additional project specific header files
 #include "include/utils.h"
 #include "include/server.h"
 

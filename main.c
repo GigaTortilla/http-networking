@@ -1,11 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
-#include <sys/socket.h>
-#include <netdb.h>
 #include <signal.h>
+
+// platform-dependent includes
+#ifdef _WIN32
+
+#include <WinSock2.h>
+
+#elif defined(__unix__) || defined(__unix) || defined(unix) || (defined(__APPLE__) && defined(__MACH__))
+
+#include <unistd.h>
+#include <sys/socket.h>
 #include <arpa/inet.h>
+#include <netdb.h>
+
+#endif
+
+// additional project specific includes
 #include "include/utils.h"
 #include "include/server.h"
 
@@ -29,7 +41,7 @@ int main(void) {
     int server_fd = get_socket_bind(res);
 
     // LISTEN
-    if (listen(server_fd, BACKLOG) == -1) {
+    if (listen(server_fd, BACKLOG) < 0) {
         perror("listen");
         return EXIT_FAILURE;
     }
@@ -38,7 +50,7 @@ int main(void) {
     action.sa_handler = sigchld_handler;
     sigemptyset(&action.sa_mask);
     action.sa_flags = SA_RESTART;
-    if (sigaction(SIGINT, &action, nullptr) == -1) {
+    if (sigaction(SIGCHLD, &action, nullptr) < 0) {
         perror("sigaction");
         return EXIT_FAILURE;
     }
