@@ -3,6 +3,10 @@ This repository is my personal network programming playground. All code is writt
 ## Feature Roadmap
 ✅ telnet ping pong
 
-🚧 simple http webserver
+✅ simple http webserver
+
+🚧 Windows compatibility
+
+🚧 React tic-tac-toe
 
 🚧 tls encryption
