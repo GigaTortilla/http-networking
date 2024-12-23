@@ -5,17 +5,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <signal.h>
-#include <errno.h>
+#include <unistd.h>
 
 #ifdef _WIN32
 
 #include <WinSock2.h>
+#include <windows.h>
+#include <ws2tcpip.h>
 
 #elif defined(__linux__) || defined(__unix__) || defined(__unix) || defined(unix) \
     || defined(__APPLE__) && defined(__MACH__)
 
-#include <unistd.h>
+#include <signal.h>
+#include <errno.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -28,23 +30,25 @@
 
 void *get_in_addr(struct sockaddr *sa) {
     if (sa->sa_family == AF_INET) {
-        return &(((struct sockaddr_in *)sa)->sin_addr);
+        return &((struct sockaddr_in *)sa)->sin_addr;
     }
-    return &(((struct sockaddr_in6 *)sa)->sin6_addr);
+    return &((struct sockaddr_in6 *)sa)->sin6_addr;
 }
 
 void *get_in_port(struct sockaddr *sa) {
     if (sa->sa_family == AF_INET) {
-        return &(((struct sockaddr_in *)sa)->sin_port);
+        return &((struct sockaddr_in *)sa)->sin_port;
     }
-    return &(((struct sockaddr_in6 *)sa)->sin6_port);
+    return &((struct sockaddr_in6 *)sa)->sin6_port;
 }
 
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__) && defined(__MACH__)
 void sigchld_handler(int sig) {
     int saved_errno = errno;
     while (waitpid(-1, nullptr, WNOHANG) > 0);
     errno = saved_errno;
 }
+#endif
 
 char *get_resp_header(const char *uri) {
     // HTTP header specific to requested file extension
@@ -80,7 +84,7 @@ void *check_mem(void *ptr) {
 int get_socket_bind(struct addrinfo *addr) {
     struct addrinfo *p;
     int server_socket;
-    int yes = 1;
+    char yes = 1;
 
     for (p = addr; p != NULL; p = p->ai_next) {
         if ((server_socket = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {

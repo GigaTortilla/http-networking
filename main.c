@@ -7,6 +7,9 @@
 #ifdef _WIN32
 
 #include <WinSock2.h>
+#include <ws2tcpip.h>
+#include <io.h>
+#include <win_server.h>
 
 #elif defined(__unix__) || defined(__unix) || defined(unix) \
     || (defined(__APPLE__) && defined(__MACH__))
@@ -19,10 +22,17 @@
 #endif
 
 // additional project specific includes
-#include "utils.h"
-#include "server.h"
+#include <utils.h>
+#include <server.h>
 
 int main(void) {
+
+#ifdef _WIN32
+
+    win_server();
+
+#else
+
     int conn_fd, status;
     struct addrinfo hints, *res;
     socklen_t sin_size;
@@ -83,7 +93,11 @@ int main(void) {
             close(server_fd);
             simple_http(conn_fd);
         }
+
         // parent process does not need the connected socket
         close(conn_fd);
     }
+
+#endif
+
 }

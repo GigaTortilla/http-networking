@@ -11,8 +11,10 @@
 #define MAX_BUFFER_SIZE 10240
 #define BACKLOG 5
 
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__) && defined(__MACH__)
 // handler function for child processes
 void sigchld_handler(int sig);
+#endif
 
 /**
  * gets the socket address struct (IPv4 or IPv6)

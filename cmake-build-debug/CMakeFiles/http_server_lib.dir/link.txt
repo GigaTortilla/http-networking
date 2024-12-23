@@ -1,0 +1,2 @@
+C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\ar.exe qc libhttp_server_lib.a CMakeFiles/http_server_lib.dir/utils.c.obj CMakeFiles/http_server_lib.dir/server.c.obj CMakeFiles/http_server_lib.dir/win_server.c.obj
+C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\ranlib.exe libhttp_server_lib.a

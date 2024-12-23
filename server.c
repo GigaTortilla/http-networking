@@ -2,10 +2,14 @@
 // Created by Martin Appel on 17.12.24.
 //
 
+#if defined(__unix__) || defined(__unix) || defined(unix) \
+    || defined(__APPLE__) && defined(__MACH__)
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
 #include <arpa/inet.h>
 
 // additional project specific header files
@@ -119,3 +123,5 @@ void ping_pong(int client_socket) {
     close(client_socket);
     exit(EXIT_SUCCESS);
 }
+
+#endif
