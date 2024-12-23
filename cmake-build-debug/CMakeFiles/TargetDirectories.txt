@@ -1,4 +1,0 @@
-C:/Users/marti/CLionProjects/http-networking/cmake-build-debug/CMakeFiles/http_server.dir
-C:/Users/marti/CLionProjects/http-networking/cmake-build-debug/CMakeFiles/http_server_lib.dir
-C:/Users/marti/CLionProjects/http-networking/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/marti/CLionProjects/http-networking/cmake-build-debug/CMakeFiles/rebuild_cache.dir
